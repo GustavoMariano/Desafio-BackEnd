@@ -1,0 +1,27 @@
+# Visual Studio / .NET
+.vs/
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Build
+**/bin/
+**/obj/
+TestResults/
+*.nupkg
+
+# Rider / JetBrains
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker overrides
+docker-compose.override.yml
+
+# Local secrets / env
+appsettings.*.json
+*.env

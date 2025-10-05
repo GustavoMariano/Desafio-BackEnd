@@ -1,0 +1,21 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:16
+    container_name: postgres_desafio
+    restart: always
+    environment:
+      POSTGRES_DB: desafio_backend
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbit_desafio
+    ports:
+      - "5672:5672"
+      - "15672:15672"
