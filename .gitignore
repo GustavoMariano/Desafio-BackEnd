@@ -25,3 +25,4 @@ docker-compose.override.yml
 # Local secrets / env
 appsettings.*.json
 *.env
+/Desafio-BackEnd/data/postgres
