@@ -13,4 +13,13 @@ public class MotorcycleRepository : RepositoryBase<Motorcycle>, IMotorcycleRepos
 
     public async Task<bool> HasRentalsAsync(Guid motorcycleId)
         => await _context.Rentals.AnyAsync(x => x.MotorcycleId == motorcycleId);
+
+    public async Task<IEnumerable<Motorcycle>> GetAllAsync(string? plate = null)
+    {
+        var query = _context.Motorcycles.AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(plate)) query = query.Where(m => m.Plate.Contains(plate));
+
+        return await query.ToListAsync();
+    }
 }

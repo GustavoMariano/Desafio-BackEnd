@@ -41,10 +41,17 @@ public class MotorcycleService
         return _mapper.Map<MotorcycleDto>(entity);
     }
 
-    public async Task<IEnumerable<MotorcycleDto>> GetAllAsync()
+    public async Task<IEnumerable<MotorcycleDto>> GetAllAsync(string? plate = null)
     {
-        var list = await _repository.GetAllAsync();
+        var list = await _repository.GetAllAsync(plate);
         return _mapper.Map<IEnumerable<MotorcycleDto>>(list);
+    }
+
+    public async Task<MotorcycleDto> GetByIdAsync(Guid id)
+    {
+        var moto = await _repository.GetByIdAsync(id)
+            ?? throw new KeyNotFoundException("Motorcycle not found.");
+        return _mapper.Map<MotorcycleDto>(moto);
     }
 
     public async Task UpdatePlateAsync(Guid id, string newPlate)

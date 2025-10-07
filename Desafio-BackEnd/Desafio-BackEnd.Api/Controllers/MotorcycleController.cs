@@ -19,14 +19,21 @@ public class MotorcycleController : ControllerBase
     public async Task<IActionResult> Create([FromBody] MotorcycleDto dto)
     {
         var result = await _service.CreateAsync(dto);
-        return CreatedAtAction(nameof(GetAll), new { id = result.Id }, result);
+        return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> Get([FromQuery] string? plate = null)
     {
-        var motos = await _service.GetAllAsync();
-        return Ok(motos);
+        var motorcycles = await _service.GetAllAsync(plate);
+        return Ok(motorcycles);
+    }
+
+    [HttpGet("{id:guid}")]
+    public async Task<IActionResult> GetById(Guid id)
+    {
+        var moto = await _service.GetByIdAsync(id);
+        return Ok(moto);
     }
 
     [HttpPut("{id:guid}/plate")]
