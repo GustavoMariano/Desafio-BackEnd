@@ -1,4 +1,5 @@
 using Desafio_BackEnd.Api.Configurations;
+using Desafio_BackEnd.Api.Middleware;
 using Desafio_BackEnd.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -35,6 +36,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseCors("AllowAll");
+app.UseMiddleware<ExceptionMiddleware>();
 
 app.MapControllers();
 
