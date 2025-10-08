@@ -1,76 +1,103 @@
-# Desafio backend Mottu.
-Seja muito bem-vindo ao desafio backend da Mottu, obrigado pelo interesse em fazer parte do nosso time e ajudar a melhorar a vida de milhares de pessoas.
+# API de Locação de Motos e Entregadores
 
-## Instruções
-- O desafio é válido para diversos níveis, portanto não se preocupe se não conseguir resolver por completo.
-- A aplicação só será avaliada se estiver rodando, se necessário crie um passo a passo para isso.
-- Faça um clone do repositório em seu git pessoal para iniciar o desenvolvimento e não cite nada relacionado a Mottu.
-- Após teste realizado, favor encaminha-lo via Link abaixo:
-Link: [Formulário - Mottu - Desafio Backend](https://forms.office.com/r/25yMPCax5S)
+Aplicação backend em **.NET (C#)** para gerenciar motos e entregadores, seguindo os requisitos do desafio. A API utiliza um banco de dados relacional (**PostgreSQL**) e um sistema de mensageria (**RabbitMQ**). O código adota **ASP.NET Core Web API**, com **Entity Framework Core** para acesso a dados, e inclui documentação automática via **Swagger/OpenAPI**. Imagens de CNH (PNG/BMP) são recebidas por endpoint e armazenadas externamente (por exemplo, em disco local).
 
-## Requisitos não funcionais 
-- A aplicação deverá ser construida com .Net utilizando C#.
-- Utilizar apenas os seguintes bancos de dados (Postgress, MongoDB)
-    - Não utilizar PL/pgSQL
-- Escolha o sistema de mensageria de sua preferencia( RabbitMq, Sqs/Sns , Kafka, Gooogle Pub/Sub ou qualquer outro)
+---
 
-## Aplicação a ser desenvolvida
-Seu objetivo é criar uma aplicação para gerenciar aluguel de motos e entregadores. Quando um entregador estiver registrado e com uma locação ativa poderá também efetuar entregas de pedidos disponíveis na plataforma.
+## Tecnologias utilizadas
 
-Iremos executar um teste de integração para validar os cenários de uso. Por isso, sua aplicação deve seguir exatamente as especificações de API`s Rest do nosso Swager: request, response e status code.
-Garanta que os atributos dos JSON`s e estão de acordo com o Swagger abaixo.
+- .NET 8 + C# (ASP.NET Core Web API)  
+- Entity Framework Core (ORM para Postgres)  
+- PostgreSQL (banco de dados relacional)  
+- RabbitMQ (broker de mensagens para eventos de domínio)  
+- Docker & Docker Compose (para subir serviço e dependências)  
+- AutoMapper, FluentValidation, Newtonsoft.Json  
+- Swagger / OpenAPI (documentação interativa)
 
-Swagger de referência:
-https://app.swaggerhub.com/apis-docs/Mottu/mottu_desafio_backend/1.0.0
+---
 
-### Casos de uso
-- Eu como usuário admin quero cadastrar uma nova moto.
-  - Os dados obrigatórios da moto são Identificador, Ano, Modelo e Placa
-  - A placa é um dado único e não pode se repetir.
-  - Quando a moto for cadastrada a aplicação deverá gerar um evento de moto cadastrada
-    - A notificação deverá ser publicada por mensageria.
-    - Criar um consumidor para notificar quando o ano da moto for "2024"
-    - Assim que a mensagem for recebida, deverá ser armazenada no banco de dados para consulta futura.
-- Eu como usuário admin quero consultar as motos existentes na plataforma e conseguir filtrar pela placa.
-- Eu como usuário admin quero modificar uma moto alterando apenas sua placa que foi cadastrado indevidamente
-- Eu como usuário admin quero remover uma moto que foi cadastrado incorretamente, desde que não tenha registro de locações.
-- Eu como usuário entregador quero me cadastrar na plataforma para alugar motos.
-    - Os dados do entregador são( identificador, nome, cnpj, data de nascimento, número da CNHh, tipo da CNH, imagemCNH)
-    - Os tipos de cnh válidos são A, B ou ambas A+B.
-    - O cnpj é único e não pode se repetir.
-    - O número da CNH é único e não pode se repetir.
-- Eu como entregador quero enviar a foto de minha cnh para atualizar meu cadastro.
-    - O formato do arquivo deve ser png ou bmp.
-    - A foto não poderá ser armazenada no banco de dados, você pode utilizar um serviço de storage( disco local, amazon s3, minIO ou outros).
-- Eu como entregador quero alugar uma moto por um período.
-    - Os planos disponíveis para locação são:
-        - 7 dias com um custo de R$30,00 por dia
-        - 15 dias com um custo de R$28,00 por dia
-        - 30 dias com um custo de R$22,00 por dia
-        - 45 dias com um custo de R$20,00 por dia
-        - 50 dias com um custo de R$18,00 por dia
-    - A locação obrigatóriamente tem que ter uma data de inicio e uma data de término e outra data de previsão de término.
-    - O inicio da locação obrigatóriamente é o primeiro dia após a data de criação.
-    - Somente entregadores habilitados na categoria A podem efetuar uma locação
-- Eu como entregador quero informar a data que irei devolver a moto e consultar o valor total da locação.
-    - Quando a data informada for inferior a data prevista do término, será cobrado o valor das diárias e uma multa adicional
-        - Para plano de 7 dias o valor da multa é de 20% sobre o valor das diárias não efetivadas.
-        - Para plano de 15 dias o valor da multa é de 40% sobre o valor das diárias não efetivadas.
-    - Quando a data informada for superior a data prevista do término, será cobrado um valor adicional de R$50,00 por diária adicional.
-    
+## Como executar a aplicação
 
-## Diferenciais 🚀
-- Testes unitários
-- Testes de integração
-- EntityFramework e/ou Dapper
-- Docker e Docker Compose
-- Design Patterns
-- Documentação
-- Tratamento de erros
-- Arquitetura e modelagem de dados
-- Código escrito em língua inglesa
-- Código limpo e organizado
-- Logs bem estruturados
-- Seguir convenções utilizadas pela comunidade
-  
+**Pré-requisitos:** instale o .NET SDK compatível (ex.: .NET 8) e o Docker (opcional).
+
+### 1. Clonar repositório
+```bash
+git clone https://github.com/GustavoMariano/Desafio-BackEnd.git
+cd Desafio-BackEnd
+```
+
+### 2. Via Docker (recomendado)
+- Ajuste as credenciais no `docker-compose.yml` ou `.env` se necessário (usuário/senha do Postgres, RabbitMQ, etc.).
+- Suba os containers:
+```bash
+docker compose up --build -d
+```
+Isso criará containers do banco de dados, mensageria e (se configurado) da API.
+
+### 3. Ou sem Docker
+- Edite a connection string do banco em `Desafio-BackEnd.Api/appsettings.*.json` apontando para seu PostgreSQL local.
+- Instale a ferramenta EF (se ainda não tiver):
+```bash
+dotnet tool install --global dotnet-ef
+```
+- Aplique as migrations:
+```bash
+dotnet ef database update \
+  --project Desafio-BackEnd.Infrastructure \
+  --startup-project Desafio-BackEnd.Api
+```
+
+### 4. Rodar a API
+```bash
+dotnet run --project ./Desafio-BackEnd.Api
+```
+
+### 5. Acessar a API
+Por padrão a aplicação ficará disponível em `http://localhost:<porta>/` (verifique a porta no `launchSettings.json` ou no Docker). A UI do Swagger estará em:
+```
+http://localhost:<porta>/swagger
+```
+
+---
+
+## Endpoints disponíveis (resumo)
+
+> Consulte o Swagger (`/swagger`) para a especificação completa de request/response e códigos HTTP.
+
+### Motos
+- `POST /api/Motorcycle` — Cadastrar nova moto (id gerado pelo servidor). Ao cadastrar, um evento é publicado.
+- `GET /api/Motorcycle` — Listar motos (aceita filtro por `plate` via query string).
+- `GET /api/Motorcycle/{id}` — Obter moto por id.
+- `PUT /api/Motorcycle/{id}/plate` — Atualizar apenas a placa.
+- `DELETE /api/Motorcycle/{id}` — Remover moto (somente se não houver locações vinculadas).
+
+### Entregadores (Couriers)
+- `POST /api/Courier` — Cadastrar entregador (campos: id, name, cnpj único, birthDate, cnhNumber único, cnhType: `"A"`, `"B"` ou `"AB"`, cnhImagePath).
+- `GET /api/Courier` — Listar entregadores.
+- `GET /api/Courier/{id}` — Obter entregador por id.
+- `POST /api/Courier/{courierId}/cnh` — Upload/atualização da imagem da CNH (`multipart/form-data`). Aceita apenas `.png` e `.bmp`. A imagem é salva em storage (não no banco).
+
+### Locações (Rentals)
+- `GET /api/Rental` — Listar locações.
+- `POST /api/Rental` — Criar locação (valida habilitação, plano, datas; gera valores/multas conforme regras).
+- `PATCH /api/Rental/{id}/devolution` — Registrar devolução e calcular valores finais (multa/extra conforme regras do plano).
+
+*(Veja o Swagger integrado para detalhes de parâmetros, modelos e códigos HTTP.)*
+
+---
+
+## Observações / regras importantes (resumo)
+
+- A placa da moto é **única**.  
+- **CNPJ** e **número da CNH** são únicos por entregador.  
+- **CNH** aceita categorias: `"A"`, `"B"`, `"AB"`.  
+- Upload de CNH: apenas `.png` e `.bmp`; arquivo salvo em storage (disco local por padrão).  
+- Planos de locação e regras financeiras:
+  - 7 dias — R$30,00 / dia — multa 20% sobre diárias não efetivadas (se devolver antes).
+  - 15 dias — R$28,00 / dia — multa 40% sobre diárias não efetivadas (se devolver antes).
+  - 30 dias — R$22,00 / dia.
+  - 45 dias — R$20,00 / dia.
+  - 50 dias — R$18,00 / dia.
+  - Devolução após a data prevista: R$50,00 por diária adicional.
+- Somente entregadores habilitados na categoria `A` (ou `AB`, que inclui A) podem efetuar locação.
 
